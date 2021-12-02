@@ -1,6 +1,4 @@
-use std::env;
-use std::fs;
-
+use aoc21::load_data;
 use itertools::izip;
 
 fn increases(measurements: &[u32]) -> usize {
@@ -19,6 +17,7 @@ fn increases(measurements: &[u32]) -> usize {
 }
 
 fn increasing_windows(measurements: &[u32]) -> usize {
+    // How can this be passed directly to increases() without the collect()?
     let windows: Vec<u32> = izip!(measurements, &measurements[1..], &measurements[2..])
         .map(|(x, y, z)| x + y + z)
         .collect();
@@ -26,12 +25,7 @@ fn increasing_windows(measurements: &[u32]) -> usize {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-
-    println!("Reading file {}", filename);
-    let contents = fs::read_to_string(filename).expect("Error reading the file");
-    println!("Number of measurements: {}", contents.lines().count());
+    let contents = load_data(1);
 
     let measurements: Vec<u32> = contents
         .lines()
