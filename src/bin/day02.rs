@@ -10,26 +10,22 @@ enum Dir {
 }
 struct Move(Dir, i32);
 
-impl FromStr for Move {
-    type Err = std::num::ParseIntError;
-
-    fn from_str(line: &str) -> Result<Self, Self::Err> {
-        let (dir, amt) = line.trim().split_whitespace().collect_tuple().unwrap();
-        let amt: i32 = amt.parse().unwrap();
-        let dir = match dir.as_ref() {
-            "up" => Dir::Up,
-            "down" => Dir::Down,
-            "forward" => Dir::Forward,
-            _ => panic!("Bad direction: {}", dir),
-        };
-        Ok(Move(dir, amt))
-    }
+fn parse_move(line: &str) -> Move {
+    let (dir, amt) = line.trim().split_whitespace().collect_tuple().unwrap();
+    let amt: i32 = amt.parse().unwrap();
+    let dir = match dir.as_ref() {
+        "up" => Dir::Up,
+        "down" => Dir::Down,
+        "forward" => Dir::Forward,
+        _ => panic!("Bad direction: {}", dir),
+    };
+    Move(dir, amt)
 }
 
 fn xy_position(moves: &Vec<Move>) -> i32 {
-    let (x, y) = moves.iter().fold((0, 0), |pos, da| {
+    let (x, y) = moves.iter().fold((0, 0), |pos, mv| {
         let (x, y) = pos;
-        match da {
+        match mv {
             Move(Dir::Up, d) => (x - d, y),
             Move(Dir::Down, d) => (x + d, y),
             Move(Dir::Forward, d) => (x, y + d),
@@ -39,9 +35,9 @@ fn xy_position(moves: &Vec<Move>) -> i32 {
 }
 
 fn xya_position(moves: &Vec<Move>) -> i32 {
-    let (x, y, _) = moves.iter().fold((0, 0, 0), |pos, da| {
+    let (x, y, _) = moves.iter().fold((0, 0, 0), |pos, mv| {
         let (x, y, a) = pos;
-        match da {
+        match mv {
             Move(Dir::Up, d) => (x, y, a - d),
             Move(Dir::Down, d) => (x, y, a + d),
             Move(Dir::Forward, d) => (x + d, y + d * a, a),
@@ -51,10 +47,7 @@ fn xya_position(moves: &Vec<Move>) -> i32 {
 }
 
 fn main() {
-    let moves: Vec<Move> = load_data(2)
-        .lines()
-        .map(|l| Move::from_str(l).unwrap())
-        .collect();
+    let moves: Vec<Move> = load_data(2).lines().map(parse_move).collect();
     println!("[p1] x * y = {}", xy_position(&moves));
     println!("[p2] x * y = {}", xya_position(&moves));
 }
