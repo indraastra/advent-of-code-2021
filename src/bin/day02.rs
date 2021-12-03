@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use aoc21::load_data;
 use itertools::Itertools;
 
