@@ -25,13 +25,9 @@ fn power_consumption(numbers: &Vec<&str>) -> u32 {
         .iter()
         .map(|&x| if x > mid { '1' } else { '0' })
         .collect();
-    let epsilon: String = counts
-        .iter()
-        .map(|&x| if x > mid { '0' } else { '1' })
-        .collect();
 
     let gamma = bits_to_u32(&gamma);
-    let epsilon = bits_to_u32(&epsilon);
+    let epsilon = !gamma & ((1 << nbits) - 1);
     println!("Gamma: {}; Epsilon: {}", gamma, epsilon);
     gamma * epsilon
 }
@@ -73,8 +69,6 @@ fn o2_rating(candidates: &Vec<&str>) -> u32 {
         // Winner wins, 1 to tie-break.
         if zeros > ones {
             '0'
-        } else if zeros < ones {
-            '1'
         } else {
             '1'
         }
@@ -87,8 +81,6 @@ fn co2_rating(numbers: &Vec<&str>) -> u32 {
         // Loser wins, 0 to tie-break.
         if zeros > ones {
             '1'
-        } else if zeros < ones {
-            '0'
         } else {
             '0'
         }
@@ -115,6 +107,11 @@ mod tests {
             "00100", "11110", "10110", "10111", "10101", "01111", "00111", "11100", "10000",
             "11001", "00010", "01010",
         ]
+    }
+
+    #[test]
+    fn test_power_consumption() {
+        assert_eq!(power_consumption(&test_data()), 198);
     }
 
     #[test]
