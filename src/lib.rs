@@ -13,3 +13,11 @@ pub fn parse_numbers<T: FromStr>(line: &str, delim: char) -> Result<Vec<T>, T::E
 pub fn parse_numbers_csv<T: FromStr>(line: &str) -> Result<Vec<T>, T::Err> {
     parse_numbers(line, ',')
 }
+
+pub fn all_true<'a>(xs: impl IntoIterator<Item = &'a bool>) -> bool {
+    xs.into_iter().all(|&x| x)
+}
+
+pub fn any_true<'a>(xs: impl IntoIterator<Item = &'a bool>) -> bool {
+    xs.into_iter().any(|&x| x)
+}
