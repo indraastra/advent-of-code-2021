@@ -89,16 +89,30 @@ fn main() -> Result<(), Box<dyn Error>> {
         boards.len()
     );
 
-    for (i, number) in numbers.iter().enumerate() {
-        for board in &mut boards {
-            mark_number(board, *number);
-            if is_winning(board) {
-                println!("Called winner {}: {}!", i, number);
-                println!("[p1] Winning score: {}", winning_score(board, *number));
-                return Ok(());
+    let mut first_score = None;
+    let mut last_score = None;
+
+    for number in numbers {
+        for board in boards.iter_mut() {
+            mark_number(board, number);
+        }
+        boards.retain(|board| {
+            let winning = is_winning(board);
+            if winning {
+                match first_score {
+                    None => first_score = Some(winning_score(board, number)),
+                    Some(_) => last_score = Some(winning_score(board, number)),
+                }
             }
+            !winning
+        });
+        if boards.len() == 0 {
+            break; 
         }
     }
+
+    println!("[p1] First winning score: {}", first_score.unwrap());
+    println!("[p2] Last winning score: {}", last_score.unwrap());
 
     Ok(())
 }
